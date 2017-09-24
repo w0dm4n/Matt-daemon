@@ -21,6 +21,8 @@
 class Daemon
 {
 	public:
+		static void							handleSignal(int signal);
+		static LockFile*					getLockFile();
 
 		Daemon();
 		Daemon(Daemon const & src);
@@ -28,10 +30,10 @@ class Daemon
 
 		Daemon &							operator=( Daemon const & rhs );
 		friend std::ostream &				operator<<(std::ostream & o, Daemon const & i);
-		void	initFork();
-		void	init();
-		void	startDaemon();
-		bool	DaemonStarted();
+		void			initFork();
+		void			init();
+		void			startDaemon();
+		bool			DaemonStarted();
 
 		struct DaemonCantReadProcFolder : public std::exception {
 			DaemonCantReadProcFolder() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
@@ -51,6 +53,13 @@ class Daemon
 			DaemonAlreadyRunning() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
 			virtual const char* what() const throw() {
 				return "An instance of the daemon is already running";
+			}
+		};
+
+		struct DaemonCantDetachProcess : public std::exception {
+			DaemonCantDetachProcess() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
+			virtual const char* what() const throw() {
+				return "Cant detach the process for starting the daemon";
 			}
 		};
 	private:

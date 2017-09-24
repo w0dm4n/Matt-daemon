@@ -22,4 +22,5 @@
 # include <string.h>
 # include <unistd.h>
 # include <boost/filesystem.hpp>
+# include <signal.h>
 #endif

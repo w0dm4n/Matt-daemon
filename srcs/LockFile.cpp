@@ -1,11 +1,12 @@
 #include "LockFile.hpp"
 
-LockFile::LockFile ( bool deleteFile )
+LockFile::LockFile ()
 {
-	this->deleteFile = deleteFile;
 	std::string filename = "/var/lock/matt_daemon.lock";
-	this->file.open(filename.c_str(), std::fstream::in | std::fstream::out | std::fstream::app);
-	this->file.close();
+	this->fd = open(filename.c_str(), O_CREAT);
+	if (this->fd > 0) {
+		flock(fd, LOCK_EX);
+	}
 }
 
 LockFile::LockFile ( LockFile const & src )
@@ -18,17 +19,18 @@ LockFile &				LockFile::operator=( LockFile const & rhs )
 {
 	if (this != &rhs)
 	{
-		// make stuff
+
 	}
 	return (*this);
 }
 
 LockFile::~LockFile ( void )
 {
-	if (this->deleteFile) {
-		std::remove("/var/lock/matt_daemon.lock");
+	std::string filename = "/var/lock/matt_daemon.lock";
+	if (this->fd) {
+		unlink(filename.c_str());
+    	flock(this->fd, LOCK_UN);
 	}
-	return ;
 }
 
 std::ostream &				operator<<(std::ostream & o, LockFile const & i)
@@ -48,13 +50,4 @@ std::string LockFile::getCurrentTime()
 	strftime(buffer,sizeof(buffer),"%d-%m-%Y %I:%M:%S", timeinfo);
 	std::string str(buffer);
 	return (buffer);
-}
-
-void	LockFile::logAttempt()
-{
-	std::string filename = "/var/lock/matt_daemon.lock";
-	this->file.open(filename.c_str(), std::fstream::in | std::fstream::out | std::fstream::app);
-	if (this->file.is_open()) {
-		this->file << "[" << this->getCurrentTime() << "]: " << "A daemon tried to run while an instance was already running !\n";
-	}
 }
