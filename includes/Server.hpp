@@ -18,6 +18,8 @@ class Server
 		friend std::ostream &				operator<<(std::ostream & o, Server const & i);
 		void listenInit();
 		void waitClients();
+		int	ClientsSocket();
+		void readClients();
 
 		struct ServerCantCreateSocket : public std::exception {
 			ServerCantCreateSocket() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
@@ -51,6 +53,13 @@ class Server
 			ServerCantAcceptSocket() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
 			virtual const char* what() const throw() {
 				return "The server cant accept socket !";
+			}
+		};
+
+		struct ServerCantSelectOnFd : public std::exception {
+			ServerCantSelectOnFd() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
+			virtual const char* what() const throw() {
+				return "The server cant select on clients fd";
 			}
 		};
 	private:

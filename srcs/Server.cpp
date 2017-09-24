@@ -32,18 +32,20 @@ std::ostream &				operator<<(std::ostream & o, Server const & i)
 
 void Server::waitClients()
 {
-	int 					fd = 0;
+	int 					fd		= 0;
+	socklen_t				length	= sizeof(in);
+	int						max_fd	= 0;
 	struct sockaddr_in		in;
-	socklen_t				length = sizeof(in);
 
 	while (true)
 	{
 		if ((fd = accept(this->sock, (struct sockaddr*)&in, &length)) == -1)
 			throw ServerCantAcceptSocket();
-		else {
+		else if (this->clients.size() < 3) { // 3 clients allowed
 			this->clients.push_back(Client(fd, in));
 		}
 	}
+	while (true);
 }
 
 void Server::listenInit()

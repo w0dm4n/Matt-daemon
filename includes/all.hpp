@@ -23,4 +23,6 @@
 # include <unistd.h>
 # include <boost/filesystem.hpp>
 # include <signal.h>
+# include <sys/select.h>
+# include <thread>
 #endif

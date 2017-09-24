@@ -22,6 +22,10 @@ int		main(int argc, char **argv)
 	}
 	catch (std::exception &error)
 	{
+		LockFile *lockFile = Daemon::getLockFile();
+		if (lockFile) {
+			delete lockFile;
+		}
 		std::cout << "An error occured while trying to init the daemon: " <<
 			error.what() << std::endl;
 	}
