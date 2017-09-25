@@ -16,17 +16,21 @@ int		main(int argc, char **argv)
 {
 	Daemon daemon;
 
-	try
-	{
-		daemon.init();
-	}
-	catch (std::exception &error)
-	{
-		LockFile *lockFile = Daemon::getLockFile();
-		if (lockFile) {
-			delete lockFile;
+	if (getuid()) {
+		std::cout << "You must be root to start this daemon !" << std::endl;
+	} else {
+		try
+		{
+			daemon.init();
 		}
-		std::cout << "An error occured while trying to init the daemon: " <<
-			error.what() << std::endl;
+		catch (std::exception &error)
+		{
+			std::cout << "An error occured while trying to init the daemon: " <<
+				error.what() << std::endl;
+			LockFile *lockFile = Daemon::getLockFile();
+			if (lockFile) {
+				delete lockFile;
+			}
+		}
 	}
 }

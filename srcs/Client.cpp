@@ -1,16 +1,22 @@
 #include "Client.hpp"
 #include "daemon.hpp"
+#include "Server.hpp"
 
-Client::Client ( int fd, struct sockaddr_in	&in)
+Client::Client ( int fd, struct sockaddr_in	&in, Server *server)
 {
 	this->fd = fd;
 	this->in = in;
-
 	this->address = inet_ntoa(this->in.sin_addr);
-	Tintin_reporter::instance()->log("New client connected from address: " + this->address + ":" + std::to_string(ntohs(this->in.sin_port)));
+	this->server = server;
 
+	Tintin_reporter::instance()->log("New client connected from address: " + this->getAddress() + ":" + std::to_string(ntohs(this->in.sin_port)));
 	std::thread thread(Client::clientThread, this);
 	thread.detach();
+}
+
+std::string Client::getAddress()
+{
+	return this->address;
 }
 
 Client::Client ( Client const & src )
@@ -54,11 +60,16 @@ void Client::clientThread(Client *client)
 				if (lockFile) {
 					delete lockFile;
 				}
+				Tintin_reporter::instance()->log("Received a quit command from (" + client->getAddress() + ":" + std::to_string(ntohs(client->in.sin_port)) + ") and exited the daemon..");
 				exit (0);
 			} else {
-				Tintin_reporter::instance()->log("Received from (" + client->address + ":" + std::to_string(ntohs(client->in.sin_port)) + "): " + data);
+				Tintin_reporter::instance()->log("Received from (" + client->getAddress() + ":" + std::to_string(ntohs(client->in.sin_port)) + "): " + data);
 			}
 			memset(&buffer, 0, CLIENT_READ);
+		} else if (res <= 0) {
+			client->server->removeClient(client);
+			Tintin_reporter::instance()->log("(" + client->getAddress() + ":" + std::to_string(ntohs(client->in.sin_port)) + ") disconnected from the daemon");
+			break;
 		}
 	}
 }

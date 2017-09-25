@@ -20,6 +20,7 @@ class Server
 		void waitClients();
 		int	ClientsSocket();
 		void readClients();
+		void removeClient(Client *client);
 
 		struct ServerCantCreateSocket : public std::exception {
 			ServerCantCreateSocket() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
@@ -66,7 +67,7 @@ class Server
 		int					listenPort;
 		struct sockaddr_in	in;
 		int					sock;
-		std::vector<Client>	clients;
+		std::vector<Client*>	clients;
 };
 
 #endif

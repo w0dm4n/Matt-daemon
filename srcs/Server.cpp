@@ -21,6 +21,8 @@ Server &				Server::operator=( Server const & rhs )
 
 Server::~Server ( void )
 {
+	for (int i = 0; i < this->clients.size(); i++)
+		delete this->clients[i];
 	return ;
 }
 
@@ -41,11 +43,24 @@ void Server::waitClients()
 	{
 		if ((fd = accept(this->sock, (struct sockaddr*)&in, &length)) == -1)
 			throw ServerCantAcceptSocket();
-		else if (this->clients.size() < 3) { // 3 clients allowed
-			this->clients.push_back(Client(fd, in));
+		if (this->clients.size() < 3) { // 3 clients allowed
+			this->clients.push_back(new Client(fd, in, this));
+		} else {
+			Tintin_reporter::instance()->log("A client tried to connect while 3 clients are already online, connection refused");
+			close (fd);
 		}
 	}
-	while (true);
+}
+
+void Server::removeClient(Client *client)
+{
+	for (int i = 0; i < this->clients.size(); i++)
+	{
+		if (this->clients[i] == client) {
+			this->clients.erase(this->clients.begin() + i);
+			break;
+		}
+	}
 }
 
 void Server::listenInit()
