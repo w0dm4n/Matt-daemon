@@ -11,10 +11,11 @@
 /* ************************************************************************** */
 
 #include "daemon.hpp"
+#include "Flags.hpp"
 
 int		main(int argc, char **argv)
 {
-	Daemon daemon;
+	Daemon	daemon(new Flags(argc, argv));
 
 	if (getuid()) {
 		std::cout << "You must be root to start this daemon !" << std::endl;

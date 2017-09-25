@@ -32,7 +32,9 @@ SRCBASE_MATT_DAEMON	=	\
 					Tintin_reporter.cpp		\
 					LockFile.cpp			\
 					Server.cpp				\
-					Client.cpp
+					Client.cpp				\
+					Flags.cpp				\
+					Flag.cpp
 
 INCS			=	$(addprefix $(INCDIR), $(INCBASE))
 

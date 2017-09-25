@@ -1,9 +1,16 @@
 #include "Daemon.hpp"
 
-Daemon::Daemon ()
+Daemon::Daemon (Flags *flags)
 {
+	this->flags = flags;
 	Tintin_reporter *instance = Tintin_reporter::instance();
 	this->logger = *instance;
+	if (this->flags->getFlag("help")) {
+		std::cout << "Matt_daemon help: " << std::endl
+		<< "--custom_port\tStart the daemon with a custom port (default 4242)" << std::endl
+		<< "--statistics\tPrint statistics at the end of the daemon execution on the log file" << std::endl;
+		exit(0);
+	}
 }
 
 Daemon::Daemon ( Daemon const & src )
@@ -22,7 +29,8 @@ Daemon &				Daemon::operator=( Daemon const & rhs )
 
 Daemon::~Daemon ( void )
 {
-	return ;
+	if (this->flags)
+		delete this->flags;
 }
 
 std::ostream &				operator<<(std::ostream & o, Daemon const & i)
@@ -53,7 +61,8 @@ void	Daemon::handleSignal(int signal)
 
 void	Daemon::startDaemon()
 {
-	Server	server(4242);
+	Flag	*customPort = this->flags->getFlag("custom_port");
+	Server	server((customPort && customPort->value.size() > 0) ? std::stoi(customPort->value) : 4242);
 	int		current_pid = getpid();
 	LockFile *lockFile = Daemon::getLockFile();
 

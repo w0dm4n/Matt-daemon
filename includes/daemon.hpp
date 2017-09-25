@@ -17,6 +17,7 @@
 #include "Tintin_reporter.hpp"
 #include "LockFile.hpp"
 #include "Server.hpp"
+#include "Flags.hpp"
 
 class Daemon
 {
@@ -24,7 +25,7 @@ class Daemon
 		static void							handleSignal(int signal);
 		static LockFile*					getLockFile();
 
-		Daemon();
+		Daemon(Flags *flags);
 		Daemon(Daemon const & src);
 		virtual ~Daemon(void);
 
@@ -63,7 +64,8 @@ class Daemon
 			}
 		};
 	private:
-	Tintin_reporter logger;
+	Tintin_reporter	logger;
+	Flags			*flags;
 };
 
 #endif
