@@ -15,6 +15,7 @@ class Tintin_reporter
 		bool initLogs();
 		std::string getCurrentTime();
 		void log(std::string message);
+		long getCurrentTimeMillis();
 		struct CantCreateLogFolder : public std::exception {
 			CantCreateLogFolder() { }
 			virtual const char* what() const throw() {

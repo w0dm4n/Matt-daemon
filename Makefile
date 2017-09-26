@@ -30,6 +30,7 @@ SRCBASE_MATT_DAEMON	=	\
 					Daemon.cpp				\
 					ProcReader.cpp			\
 					Tintin_reporter.cpp		\
+					Daemon_statistics.cpp	\
 					LockFile.cpp			\
 					Server.cpp				\
 					Client.cpp				\

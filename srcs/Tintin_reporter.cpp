@@ -43,6 +43,14 @@ std::string Tintin_reporter::getCurrentTime()
 	return (buffer);
 }
 
+long 	Tintin_reporter::getCurrentTimeMillis()
+{
+	 struct timeval tv;
+
+	 gettimeofday(&tv, NULL);
+	 return (tv.tv_usec);
+}
+
 void	Tintin_reporter::log(std::string message)
 {
 	std::fstream file;

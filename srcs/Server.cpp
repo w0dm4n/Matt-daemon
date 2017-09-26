@@ -3,6 +3,7 @@
 Server::Server (int port)
 {
 	this->listenPort = port;
+	this->statistics = new Deamon_statistics();
 }
 
 Server::Server ( Server const & src )
@@ -23,6 +24,7 @@ Server::~Server ( void )
 {
 	for (int i = 0; i < this->clients.size(); i++)
 		delete this->clients[i];
+	delete this->statistics;
 	return ;
 }
 
@@ -30,6 +32,11 @@ std::ostream &				operator<<(std::ostream & o, Server const & i)
 {
 	(void)i;
 	return (o);
+}
+
+Deamon_statistics	*Server::get_statistics( void )
+{
+	return (this->statistics);
 }
 
 void Server::waitClients()
@@ -43,6 +50,7 @@ void Server::waitClients()
 	{
 		if ((fd = accept(this->sock, (struct sockaddr*)&in, &length)) == -1)
 			throw ServerCantAcceptSocket();
+		this->statistics->set_number_of_connection_accepted(this->statistics->get_number_of_connection_accepted() + 1);
 		if (this->clients.size() < 3) { // 3 clients allowed
 			this->clients.push_back(new Client(fd, in, this));
 		} else {
@@ -77,5 +85,7 @@ void Server::listenInit()
 	if ((listen(this->sock, 3)) == -1)
 		throw ServerCantListenOnSocket();
 	Tintin_reporter::instance()->log("Server started on port " + std::to_string(this->listenPort));
+	this->statistics->set_start_time(Tintin_reporter::getCurrentTimeMillis());
 	this->waitClients();
+	this->statistics->set_end_time(Tintin_reporter::getCurrentTimeMillis());
 }

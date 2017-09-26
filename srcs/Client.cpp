@@ -63,6 +63,8 @@ void Client::clientThread(Client *client)
 				Tintin_reporter::instance()->log("Received a quit command from (" + client->getAddress() + ":" + std::to_string(ntohs(client->in.sin_port)) + ") and exited the daemon..");
 				exit (0);
 			} else {
+				//increment message_received
+				client->server->get_statistics()->set_number_of_message_received(client->server->get_statistics()->get_number_of_message_received() + 1);
 				Tintin_reporter::instance()->log("Received from (" + client->getAddress() + ":" + std::to_string(ntohs(client->in.sin_port)) + "): " + data);
 			}
 			memset(&buffer, 0, CLIENT_READ);

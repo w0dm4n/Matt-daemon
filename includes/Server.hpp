@@ -6,6 +6,8 @@
 # include <arpa/inet.h>
 # include "Tintin_reporter.hpp"
 # include "Client.hpp"
+# include "Deamon_statistics.hpp"
+
 class Server
 {
 	public:
@@ -16,11 +18,13 @@ class Server
 
 		Server &							operator=( Server const & rhs );
 		friend std::ostream &				operator<<(std::ostream & o, Server const & i);
-		void listenInit();
-		void waitClients();
-		int	ClientsSocket();
-		void readClients();
-		void removeClient(Client *client);
+		
+		void				listenInit();
+		void				waitClients();
+		int					ClientsSocket();
+		void				readClients();
+		void				removeClient(Client *client);
+		Deamon_statistics	*get_statistics( void );
 
 		struct ServerCantCreateSocket : public std::exception {
 			ServerCantCreateSocket() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
@@ -64,10 +68,11 @@ class Server
 			}
 		};
 	private:
-		int					listenPort;
-		struct sockaddr_in	in;
-		int					sock;
+		int						listenPort;
+		struct sockaddr_in		in;
+		int						sock;
 		std::vector<Client*>	clients;
+		Deamon_statistics		*statistics;
 };
 
 #endif
