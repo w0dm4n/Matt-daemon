@@ -48,18 +48,12 @@ std::ostream &				operator<<(std::ostream & o, Daemon_statistics const & i)
 
 void	Daemon_statistics::update_start_time( void )
 {
-	struct timeval tv;
-
-	gettimeofday(&tv, NULL);
-	this->start_time = tv.tv_usec;
+	 time(&this->start_time);
 }
 
 void	Daemon_statistics::update_end_time( void )
 {
-	struct timeval tv;
-
-	gettimeofday(&tv, NULL);
-	this->end_time = tv.tv_usec;
+	time(&this->end_time);
 }
 
 int		Daemon_statistics::get_number_of_message_received( void )
@@ -105,25 +99,16 @@ void	Daemon_statistics::set_end_time( long time )
 
 std::string	Daemon_statistics::to_string( void )
 {
-	time_t up_time = this->end_time - this->start_time;
-	unsigned int days, hours, min, sec;
-
-	up_time /= 60;
-	days = static_cast<int>(up_time / (24*60*60*1000));
-	up_time %= 24;
-	hours = static_cast<int>(up_time / (60*60*1000));
-	up_time %= 60;
-	min = static_cast<int>(up_time / (60 * 1000));
-	up_time %= 60;
-	sec = static_cast<int>(up_time / 1000);
-
 	std::ostringstream s;
-	s << "\n-----------------------------------------------------------\n";
-	s << "Deamon statistics :\n";
-	s << "Total received message     : " << this->number_of_message_received << "\n";
-	s << "Total connection accept    : " << this->number_of_connection_accepted << "\n";
-	s << "Deamon total uptime        : " << days << "d";
-	s << hours << "h" << min << "m" << sec << "s" << "\n";
+	double seconds;
+
+	seconds = difftime(this->end_time, this->start_time);
+	s << std::endl;
+	s << "-----------------------------------------------------------" << std::endl;
+	s << "Deamon statistics :" << std::endl;
+	s << "Total received message     : " << this->number_of_message_received << std::endl;
+	s << "Total connection accept    : " << this->number_of_connection_accepted << std::endl;
+	s << "Seconds spent: " << seconds << std::endl;
 	s << "-----------------------------------------------------------";
 	return (s.str());
 }

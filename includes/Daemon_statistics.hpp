@@ -12,7 +12,7 @@
 class Daemon_statistics
 {
 	public:
-	
+
 		Daemon_statistics( void );
 		Daemon_statistics( Daemon_statistics const & src );
 		virtual ~Daemon_statistics( void );
@@ -38,8 +38,8 @@ class Daemon_statistics
 	// PRIVATE VARIABLES ################################################
 		int		number_of_message_received;
 		int		number_of_connection_accepted;
-		long	start_time;
-		long	end_time;
+		time_t	start_time;
+		time_t	end_time;
 };
 
 #endif
