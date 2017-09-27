@@ -2,6 +2,8 @@
 # define TINTIN_REPORTER_HPP
 
 #include "all.hpp"
+#include <sys/time.h>
+
 class Tintin_reporter
 {
 	public:

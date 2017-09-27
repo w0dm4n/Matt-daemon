@@ -6,7 +6,7 @@
 # include <arpa/inet.h>
 # include "Tintin_reporter.hpp"
 # include "Client.hpp"
-# include "Deamon_statistics.hpp"
+# include "Daemon_statistics.hpp"
 
 class Server
 {
@@ -24,7 +24,8 @@ class Server
 		int					ClientsSocket();
 		void				readClients();
 		void				removeClient(Client *client);
-		Deamon_statistics	*get_statistics( void );
+		Daemon_statistics	*get_statistics( void );
+		void				closeServer( void );
 
 		struct ServerCantCreateSocket : public std::exception {
 			ServerCantCreateSocket() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
@@ -72,7 +73,7 @@ class Server
 		struct sockaddr_in		in;
 		int						sock;
 		std::vector<Client*>	clients;
-		Deamon_statistics		*statistics;
+		Daemon_statistics		*statistics;
 };
 
 #endif

@@ -46,6 +46,22 @@ std::ostream &				operator<<(std::ostream & o, Daemon_statistics const & i)
 
 // PUBLIC METHOD #################################################
 
+void	Daemon_statistics::update_start_time( void )
+{
+	struct timeval tv;
+
+	gettimeofday(&tv, NULL);
+	this->start_time = tv.tv_usec;
+}
+
+void	Daemon_statistics::update_end_time( void )
+{
+	struct timeval tv;
+
+	gettimeofday(&tv, NULL);
+	this->end_time = tv.tv_usec;
+}
+
 int		Daemon_statistics::get_number_of_message_received( void )
 {
 	return (this->number_of_message_received);
@@ -86,24 +102,30 @@ void	Daemon_statistics::set_end_time( long time )
 	this->end_time = time;
 }
 
+
 std::string	Daemon_statistics::to_string( void )
 {
-	long n_up_time = this->end_time - this->start_time;
-	char uptime[80];
-	time_t rawtime;
-	struct tm *timeinfo;
+	time_t up_time = this->end_time - this->start_time;
+	unsigned int days, hours, min, sec;
 
-	rawtime.tv_usec = n_up_time;
-	timeinfo = localtime(&rawtime);
-	strftime(uptime,sizeof(uptime),"%d-%m-%Y %I:%M:%S", timeinfo);
-	std::string str(uptime);
+	up_time /= 60;
+	days = static_cast<int>(up_time / (24*60*60*1000));
+	up_time %= 24;
+	hours = static_cast<int>(up_time / (60*60*1000));
+	up_time %= 60;
+	min = static_cast<int>(up_time / (60 * 1000));
+	up_time %= 60;
+	sec = static_cast<int>(up_time / 1000);
 
-	std::string s = "Deamon statistics :" << std::endl
-		<< "Total received message     : " << this->number_of_message_received
-		<< "Total connection accept    : " << this->number_of_connection_accepted
-		<< "Deamon total uptime        : " << uptime;
-
-	return (s);
+	std::ostringstream s;
+	s << "\n-----------------------------------------------------------\n";
+	s << "Deamon statistics :\n";
+	s << "Total received message     : " << this->number_of_message_received << "\n";
+	s << "Total connection accept    : " << this->number_of_connection_accepted << "\n";
+	s << "Deamon total uptime        : " << days << "d";
+	s << hours << "h" << min << "m" << sec << "s" << "\n";
+	s << "-----------------------------------------------------------";
+	return (s.str());
 }
 
 // ###############################################################
