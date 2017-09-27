@@ -60,7 +60,12 @@ void Client::clientThread(Client *client)
 				if (lockFile) {
 					delete lockFile;
 				}
+				Server *server = Daemon::getServer(-1);
 				Tintin_reporter::instance()->log("Received a quit command from (" + client->getAddress() + ":" + std::to_string(ntohs(client->in.sin_port)) + ") and exited the daemon..");
+				if (server) {
+					server->closeServer();
+					delete server;
+				}
 				exit (0);
 			} else {
 				//increment message_received
