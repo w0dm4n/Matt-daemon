@@ -25,6 +25,7 @@ class Daemon
 		static void							handleSignal(int signal);
 		static LockFile*						getLockFile();
 		static Server*							getServer(int port);
+		static Flags*							getFlags(Flags *f);
 
 		Daemon(Flags *flags);
 		Daemon(Daemon const & src);
@@ -65,7 +66,7 @@ class Daemon
 			}
 		};
 	private:
-	Tintin_reporter	logger;
+	Tintin_reporter		logger;
 	Flags			*flags;
 	Server			*server;
 };

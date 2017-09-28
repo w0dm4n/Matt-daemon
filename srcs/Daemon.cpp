@@ -4,6 +4,7 @@ Daemon::Daemon (Flags *flags)
 {
 	this->flags = flags;
 	this->server = NULL;
+	this->getFlags(this->flags);
 	Tintin_reporter *instance = Tintin_reporter::instance();
 	this->logger = *instance;
 	if (this->flags->getFlag("help")) {
@@ -38,6 +39,16 @@ std::ostream &				operator<<(std::ostream & o, Daemon const & i)
 {
 	(void)i;
 	return (o);
+}
+
+Flags	*Daemon::getFlags(Flags *s)
+{
+	static Flags	*f;
+
+	if (s != NULL) {
+		f = s;	
+	}
+	return (f);
 }
 
 LockFile *Daemon::getLockFile()
@@ -86,6 +97,7 @@ void	Daemon::startDaemon()
 	int		current_pid = getpid();
 	LockFile	*lockFile =Daemon::getLockFile();
 
+	server->setFlags(Daemon::getFlags(NULL));
 	chdir("/");
 	this->logger.log("Daemon started with PID " + std::to_string(current_pid));
 	for (int i = 1 ; i < _NSIG; i++)

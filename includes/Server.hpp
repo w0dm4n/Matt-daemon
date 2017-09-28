@@ -6,6 +6,7 @@
 # include <arpa/inet.h>
 # include "Tintin_reporter.hpp"
 # include "Client.hpp"
+# include "Flags.hpp"
 # include "Daemon_statistics.hpp"
 
 class Server
@@ -26,6 +27,7 @@ class Server
 		void				removeClient(Client *client);
 		Daemon_statistics	*get_statistics( void );
 		void				closeServer( void );
+		void				setFlags(Flags *f);
 
 		struct ServerCantCreateSocket : public std::exception {
 			ServerCantCreateSocket() { Tintin_reporter::instance()->log("Exception raised: " + std::string(this->what())); }
@@ -74,6 +76,7 @@ class Server
 		int						sock;
 		std::vector<Client*>	clients;
 		Daemon_statistics		*statistics;
+		Flags				*flags;
 };
 
 #endif

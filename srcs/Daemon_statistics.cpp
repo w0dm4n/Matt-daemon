@@ -100,15 +100,19 @@ void	Daemon_statistics::set_end_time( long time )
 std::string	Daemon_statistics::to_string( void )
 {
 	std::ostringstream s;
-	double seconds;
+	int seconds, hours, minutes;
 
-	seconds = difftime(this->end_time, this->start_time);
+	seconds = (int)difftime(this->end_time, this->start_time);
+	hours = (int)(seconds / (60 * 60));
+	seconds -= (int)(hours * (60 * 60));
+	minutes = (int)(seconds / (60));
+	seconds -= (int)(minutes * (60));
 	s << std::endl;
 	s << "-----------------------------------------------------------" << std::endl;
-	s << "Deamon statistics :" << std::endl;
+	s << "Deamon statistics          :" << std::endl;
 	s << "Total received message     : " << this->number_of_message_received << std::endl;
 	s << "Total connection accept    : " << this->number_of_connection_accepted << std::endl;
-	s << "Seconds spent: " << seconds << std::endl;
+	s << "Uptime                     : " << hours << "h" << minutes << "m" << seconds << "s" << std::endl;
 	s << "-----------------------------------------------------------";
 	return (s.str());
 }

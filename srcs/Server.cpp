@@ -2,6 +2,7 @@
 
 Server::Server (int port)
 {
+	this->flags = NULL;
 	this->listenPort = port;
 	this->statistics = new Daemon_statistics();
 }
@@ -89,8 +90,15 @@ void Server::listenInit()
 	this->waitClients();
 }
 
+void Server::setFlags(Flags *f)
+{
+	this->flags = f;
+}
+
 void Server::closeServer( void )
 {
-	this->statistics->update_end_time();
-	Tintin_reporter::instance()->log(this->statistics->to_string());
+	if (this->flags && this->flags->getFlag("statistics")) {
+		this->statistics->update_end_time();
+		Tintin_reporter::instance()->log(this->statistics->to_string());
+	}
 }
